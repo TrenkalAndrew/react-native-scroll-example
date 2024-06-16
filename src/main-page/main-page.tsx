@@ -1,15 +1,21 @@
-import React from 'react';
+import React, {useRef} from 'react';
 
-import {View} from 'react-native';
+import {Animated, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Tabs} from '../tabs';
 
-const Rect = () => {
+const Rect = ({animatedProgress}: {animatedProgress: Animated.Value}) => {
+  const size = animatedProgress.interpolate({
+    inputRange: [-150, 0],
+    outputRange: [0, 150],
+    extrapolate: 'clamp',
+  });
+
   return (
-    <View
+    <Animated.View
       style={{
-        width: 150,
-        height: 150,
+        width: size,
+        height: size,
         backgroundColor: 'red',
         alignSelf: 'center',
       }}
@@ -20,14 +26,18 @@ const Rect = () => {
 export const MainPage = () => {
   const {top} = useSafeAreaInsets();
 
+  const ref = useRef<View>(null);
+  const animatedProgress = useRef(new Animated.Value(0)).current;
+
   return (
     <View
       style={{
         paddingTop: top,
         flex: 1,
-      }}>
-      <Rect />
-      <Tabs />
+      }}
+      ref={ref}>
+      <Rect animatedProgress={animatedProgress} />
+      <Tabs animatedProgress={animatedProgress} />
     </View>
   );
 };
