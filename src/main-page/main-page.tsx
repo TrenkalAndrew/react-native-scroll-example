@@ -1,15 +1,16 @@
 import React, {useRef} from 'react';
-import {Animated, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {Tabs} from '../tabs';
 import {Card} from './Card';
+import {useSharedValue} from 'react-native-reanimated';
 
 export const MainPage = () => {
   const {top} = useSafeAreaInsets();
 
   const ref = useRef<View>(null);
-  const animatedProgress = useRef(new Animated.Value(150)).current;
+  const animatedProgress = useSharedValue(150);
 
   return (
     <View

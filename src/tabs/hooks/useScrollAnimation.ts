@@ -1,10 +1,15 @@
-import {useCallback, useRef} from 'react';
-import {Animated, NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
+import {
+  useAnimatedScrollHandler,
+  SharedValue,
+  withTiming,
+  Easing,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 const DURATION = 400;
 
 type UseScrollAnimation = {
-  animatedProgress: Animated.Value;
+  animatedProgress: SharedValue<number>;
   minAnimationValue: number;
   maxAnimationValue: number;
 };
@@ -14,32 +19,29 @@ export const useScrollAnimation = ({
   minAnimationValue,
   maxAnimationValue,
 }: UseScrollAnimation) => {
-  const isCollapsed = useRef(false);
+  const isCollapsed = useSharedValue(false);
 
-  const handleScroll = useCallback(
-    ({
-      nativeEvent: {contentOffset},
-    }: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (contentOffset.y <= 0 && isCollapsed.current) {
-        isCollapsed.current = false;
-        Animated.timing(animatedProgress, {
-          toValue: maxAnimationValue,
-          useNativeDriver: false,
+  const handleScroll = useAnimatedScrollHandler({
+    onScroll: ({contentOffset}) => {
+      if (contentOffset.y <= 0 && isCollapsed.value) {
+        isCollapsed.value = false;
+
+        animatedProgress.value = withTiming(maxAnimationValue, {
           duration: DURATION,
-        }).start();
+          easing: Easing.inOut(Easing.ease),
+        });
       }
 
-      if (contentOffset.y > 0 && !isCollapsed.current) {
-        isCollapsed.current = true;
-        Animated.timing(animatedProgress, {
-          toValue: minAnimationValue,
-          useNativeDriver: false,
+      if (contentOffset.y > 0 && !isCollapsed.value) {
+        isCollapsed.value = true;
+
+        animatedProgress.value = withTiming(minAnimationValue, {
           duration: DURATION,
-        }).start();
+          easing: Easing.inOut(Easing.ease),
+        });
       }
     },
-    [animatedProgress, maxAnimationValue, minAnimationValue],
-  );
+  });
 
   return {handleScroll};
 };

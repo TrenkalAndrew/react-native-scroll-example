@@ -1,13 +1,14 @@
 import React from 'react';
 
 import {Animated, Text, StyleSheet} from 'react-native';
+import {SharedValue} from 'react-native-reanimated';
 import {useScrollAnimation} from './hooks';
 import {MAX_ANIMATION_VALUE, MIN_ANIMATION_VALUE} from './constants';
 
 const array = new Array(100).fill(0);
 
 type TProps = {
-  animatedProgress: Animated.Value;
+  animatedProgress: SharedValue<number>;
 };
 
 export const SettingsTab = ({animatedProgress}: TProps) => {

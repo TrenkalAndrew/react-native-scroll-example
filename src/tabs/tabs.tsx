@@ -1,12 +1,12 @@
 import React from 'react';
-import {Animated} from 'react-native';
+import {SharedValue} from 'react-native-reanimated';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
 import {HomeTab} from './home-tab';
 import {SettingsTab} from './settings-tab';
 
 type TProps = {
-  animatedProgress: Animated.Value;
+  animatedProgress: SharedValue<number>;
 };
 
 const Tab = createMaterialTopTabNavigator();
